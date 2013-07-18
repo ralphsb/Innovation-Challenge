@@ -8,6 +8,7 @@ drop table Notes;
 drop table FSStructure;
 drop table Notebooks;
 drop table FSObjects;
+drop table FSObjectType;
 drop table UserGroupMappings;
 drop table UserGroups;
 drop table Users;
@@ -46,15 +47,23 @@ create table UserGroupMappings(
 	foreign key (groupID) references UserGroups(groupID) on delete cascade
 );
 
+create table FSObjectType(
+	typeName varchar(20),
+	
+	primary key (typeName)
+);
+
 create table FSObjects(
 	objectID int,
-	
-	primary key (objectID)
+	objectName varchar(100),
+	typeName varchar(20),
+
+	primary key (objectID),
+	foreign key (typeName) references FSObjectType (typeName)
 );
 
 create table Notebooks(
 	notebookID int,
-	notebookName varchar(100),
 	
 	primary key (notebookID),
 	foreign key(notebookID) references FSObject(objectID)
@@ -129,3 +138,8 @@ create table NotePermissions(
 	foreign key (permission) references Permissions(permission) on delete cascade
 );
 
+insert into FSObjectType (typeName) values ('note');
+insert into FSObjectType (typeName) values ('notebook');
+
+insert into Permissions (permission) values ('read');
+insert into Permissions (permission) values ('write');

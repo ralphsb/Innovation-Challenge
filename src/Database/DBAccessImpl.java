@@ -2,8 +2,14 @@ package Database;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
 
+import DataModel.FSObject;
+import DataModel.FSObjectImpl;
+import DataModel.FSObjectType;
 import DataModel.Notebook;
+import DataModel.NotebookImpl;
 
 /**
  * A simple (non-hibernate based) implementation of the database interface.
@@ -57,13 +63,14 @@ final class DBAccessImpl implements DBAccess {
 			
 			// Add the object to the global file system object directory
 			String update = "insert into " + SCHEMA_NAME + ".FSObjects " +
-					"(objectID) values (" + (previousFSObjectID + 1) + ")";
+					"(objectID, objectName, typeName) values (" + (previousFSObjectID + 1) + 
+					", '" + notebook.getName() + "', notebook)";
 			sql.getResultSafe(update);
 			previousFSObjectID++;
 			
 			// Add the notebook to the notebook table
-			update = "insert into " + SCHEMA_NAME + ".Notebooks (notebookID, notebookName) "
-					+ "values (" + previousFSObjectID + ", '" + notebook.getName() + "')";
+			update = "insert into " + SCHEMA_NAME + ".Notebooks (notebookID) "
+					+ "values (" + previousFSObjectID + ")";
 			sql.getResultSafe(update);
 			
 			// Place the notebook under the specified parent notebook
@@ -94,6 +101,55 @@ final class DBAccessImpl implements DBAccess {
 		}
 		
 		return false;
+	}
+
+
+	@Override
+	public Notebook getNotebook(int notebookID) throws DBException {
+		// Get the details of the notebook
+		String query = "select notebookID, notebookName " +
+				"from " + SCHEMA_NAME + ".Notebooks " +
+				"where notebookID = " + notebookID;
+		
+		ResultSet rs = sql.getResultSafe(query);
+		
+		String notebookName = null;
+		try{
+			if(!rs.next()){
+				return null;
+			}
+			notebookName = rs.getString(2);
+		}
+		catch(SQLException e){
+			throw new DBException(e);
+		}
+		
+		// Get the notebook's children
+		query = "select objectID, typeName, objectName " +
+				"from " + SCHEMA_NAME + ".FSObjects fso, " +
+				SCHEMA_NAME + ".FSStructure fss " +
+				"where fss.parent = " + notebookID + " and " +
+				"fss.child = fso.objectID " +
+				"order by objectName";
+		
+		rs = sql.getResultSafe(query);
+		List<FSObject> children = new LinkedList<FSObject>();
+		try{
+			while(rs.next()){
+				int id = rs.getInt(1);
+				FSObjectType type = FSObjectType.fromString(rs.getString(2));
+				String name = rs.getString(3);
+				FSObject obj = new FSObjectImpl(id, name, type);
+				
+				children.add(obj);
+			}
+		}
+		catch(SQLException e){
+			throw new DBException("Error communicating with DB", e);
+		}
+		
+		// Create and return the new Notebook
+		return new NotebookImpl(notebookID, notebookName, children);
 	}
 
 }

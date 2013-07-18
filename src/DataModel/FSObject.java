@@ -8,4 +8,10 @@ package DataModel;
  */
 public interface FSObject {
 
+	public FSObjectType getType();
+	
+	public String getName();
+	
+	public int getID();
+	
 }

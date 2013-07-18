@@ -19,6 +19,13 @@ public interface DBAccess {
 	 */
 	public int addNotebook(int parentNotebookID, Notebook notebook) throws DBAddException;
 	
+	/**
+	 * Gets the file system object with the inputed ID number
+	 * @param objectID
+	 * @return
+	 */
+	public Notebook getNotebook(int notebookID) throws DBException;
+	
 	
 	/**
 	 * Singleton provided for convenience.
