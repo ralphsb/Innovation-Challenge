@@ -7,4 +7,8 @@ package DataModel;
  */
 public interface Notebook extends FSObject {
 
+	public int getID();
+	
+	public String getName();
+	
 }
