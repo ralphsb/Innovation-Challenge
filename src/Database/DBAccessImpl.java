@@ -11,6 +11,8 @@ import DataModel.FSObjectType;
 import DataModel.Note;
 import DataModel.Notebook;
 import DataModel.NotebookImpl;
+import DataModel.Permission;
+import DataModel.User;
 
 /**
  * A simple (non-hibernate based) implementation of the database interface.
@@ -166,6 +168,27 @@ final class DBAccessImpl implements DBAccess {
 
 	@Override
 	public Note getNote(int noteID) throws DBException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public void addUser(User u) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public User getUser(int id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public Permission getPermission(int noteID, int userID) {
 		// TODO Auto-generated method stub
 		return null;
 	}

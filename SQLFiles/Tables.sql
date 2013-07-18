@@ -81,12 +81,14 @@ create table FSStructure(
 
 create table Notes(
 	noteID int,
-	author varchar(50),
+	author int,
 	created datetime,
+	lastModified datetime,
 	content text,
 
 	primary key (noteID),
-	foreign key (noteID) references FSObjects(objectID) on delete cascade
+	foreign key (noteID) references FSObjects(objectID) on delete cascade,
+	foreign key (author) references Users(userID) on delete cascade
 );
 
 create table NoteMetaData(

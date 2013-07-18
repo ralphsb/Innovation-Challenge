@@ -2,6 +2,8 @@ package Database;
 
 import DataModel.Note;
 import DataModel.Notebook;
+import DataModel.Permission;
+import DataModel.User;
 
 /**
  * External users of this package should use this interface to make calls to the
@@ -46,13 +48,35 @@ public interface DBAccess {
 	 */
 	public Note getNote(int noteID) throws DBException;
 	
+	/**
+	 * Adds 
+	 * @param u the user object to add
+	 */
+	public void addUser(User u);
+	
+	/**
+	 * Returns the user info for the given id
+	 * @param id the id of the user
+	 * @return the user object for that id
+	 */
+	public User getUser(int id);
+	
+	/**
+	 * For a given noteID and userID, returns what permissions the user has on the
+	 * note.
+	 * @param noteID
+	 * @param userID
+	 * @return
+	 */
+	public Permission getPermission(int noteID, int userID);
+	
 	
 	/**
 	 * Singleton provided for convenience.
 	 * @author Ralph
 	 *
 	 */
-	public class Singlton{
+	public class Singleton{
 		
 		private static DBAccess instance;
 		

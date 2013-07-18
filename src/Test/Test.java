@@ -11,7 +11,7 @@ public class Test {
 		//Notebook book = new NotebookImpl(-1, "My notebook", null);
 		//DBAccess.Singlton.getInstance().addNotebook(1, book);
 		
-		Notebook book = DBAccess.Singlton.getInstance().getNotebook(1);
+		Notebook book = DBAccess.Singleton.getInstance().getNotebook(1);
 		System.out.println(book);
 	}
 
