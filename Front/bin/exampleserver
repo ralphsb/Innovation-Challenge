@@ -17,7 +17,7 @@ var argv = require('optimist').
   argv;
 
 var server = express();
-server.use(express.static(__dirname + '/../examples'));
+server.use(express.static(__dirname + '/../webpages'));
 
 var options = {
   db: {type: 'none'},
@@ -46,14 +46,14 @@ var port = argv.p;
 // Attach the sharejs REST and Socket.io interfaces to the server
 sharejs.server.attach(server, options);
 
-var renderer = require('../examples/_static');
+var renderer = require('../webpages/_static');
 server.get('/static/:docName', function(req, res, next) {
   var docName;
   docName = req.params.docName;
   renderer(docName, server.model, res, next);
 });
 
-var wiki = require('../examples/_wiki');
+var wiki = require('../webpages/_wiki');
 server.get('/wiki/?', function(req, res, next) {
   res.writeHead(301, {location: '/wiki/Main'});
   res.end();
