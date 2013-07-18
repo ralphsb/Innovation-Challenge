@@ -29,7 +29,7 @@ public interface DBAccess {
 		
 		private static DBAccess instance;
 		
-		public static DBAccess getInstance(){
+		public static DBAccess getInstance() throws DBException{
 			if(instance == null){
 				instance = new DBAccessImpl();
 			}
