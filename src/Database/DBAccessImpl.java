@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import DataModel.FSObject;
 import DataModel.FSObjectImpl;
@@ -12,7 +14,9 @@ import DataModel.Note;
 import DataModel.Notebook;
 import DataModel.NotebookImpl;
 import DataModel.Permission;
+import DataModel.Tag;
 import DataModel.User;
+import DataModel.UserEntity;
 
 /**
  * A simple (non-hibernate based) implementation of the database interface.
@@ -57,7 +61,7 @@ final class DBAccessImpl implements DBAccess {
 
 
 	@Override
-	public int addNotebook(int parentNotebookID, Notebook notebook) throws DBAddException {
+	public synchronized int addNotebook(int parentNotebookID, Notebook notebook) throws DBAddException {
 		try {
 			// Make sure the parent notebook exists
 			if(!notebookDoesExist(parentNotebookID)){
@@ -109,7 +113,7 @@ final class DBAccessImpl implements DBAccess {
 
 
 	@Override
-	public Notebook getNotebook(int notebookID) throws DBException {
+	public synchronized Notebook getNotebook(int notebookID) throws DBException {
 		// Get the details of the notebook
 		String query = "select notebookID, objectName " +
 				"from " + SCHEMA_NAME + ".Notebooks, " +
@@ -160,37 +164,176 @@ final class DBAccessImpl implements DBAccess {
 
 
 	@Override
-	public int addNote(int parentNotebookID, Note note) throws DBException {
-		// TODO Auto-generated method stub
-		return 0;
+	public synchronized int addNote(int parentNotebookID, Note note, 
+			Map<UserEntity, Permission> perms) throws DBAddException, DBException {
+		try{
+			if(!notebookDoesExist(parentNotebookID)){
+				throw new DBAddException("Parent notebook does not exist");
+			}
+		}
+		catch(SQLException e){
+			throw new DBException("Error communicating with DB", e);
+		}
+		
+		int tempID = previousFSObjectID + 1;
+		
+		// Insert the note into the FSObject directory
+		insertNoteIntoFSObjectTable(tempID, note);
+		
+		// Insert the note into the Notes table
+		insertNoteIntoNotesTable(tempID, note);
+		
+		// Insert the note into the FSStructure table
+		insertNoteIntoFSStructureTable(parentNotebookID, tempID);
+		
+		// Insert the note metadata into the NoteMetadata table
+		insertNoteMetaData(tempID, note);
+		
+		// Insert the tags into the tags table
+		insertNoteTagsIntoTable(tempID, note);
+		
+		// Insert the perms into the perms table
+		insertNotePermsIntoTable(tempID, perms);
+		
+		previousFSObjectID++;
+		return tempID;
 	}
 
 
-	@Override
-	public Note getNote(int noteID) throws DBException {
-		// TODO Auto-generated method stub
-		return null;
+	/**
+	 * Inserts the note into the FSObjectTable
+	 * @param id the id of the note
+	 * @param note the note
+	 */
+	private void insertNoteIntoFSObjectTable(int id, Note note){
+		String update = "insert into " + SCHEMA_NAME + ".FSObjects (objectID, objectName, " +
+				"typeName) values (" + id + ", '" + note.getName() + "', " +
+				"note)";
+		sql.getResultSafe(update);
 	}
-
-
-	@Override
-	public void addUser(User u) {
+	
+	
+	/**
+	 * Inserts the note into the notes table
+	 * @param id the id of the note
+	 * @param note the note
+	 */
+	private void insertNoteIntoNotesTable(int id, Note note){
+		String createdDate = null;
+		String modifiedDate = null;
+		String content = makeSafeString(note.getContent());
+		String update = "insert into " + SCHEMA_NAME + ".Notes (noteID, author, created, " +
+				"lastModified, content) values (" + id + ", " + note.getAuthor().getID() + 
+				", STR_TO_DATE('" + createdDate + "', '%Y-%m-%d %H:%i'), " +
+				" STR_TO_DATE('" + modifiedDate + "','%Y-%m-%d %H:%i'), '" + 
+				content + "')";
+		
+		sql.getResultSafe(update);
+	}
+	
+	
+	/**
+	 * Inserts the note into the FSStructure table
+	 * @param parentID the parent notebook's id (does NOT check for validity)
+	 * @param id the id number of the note
+	 */
+	private void insertNoteIntoFSStructureTable(int parentID, int id){
+		String update = "insert into " + SCHEMA_NAME + ".FSStructure (parent, child) values " +
+				"(" + parentID + ", " + id + ")";
+		
+		sql.getResultSafe(update);
+	}
+	
+	
+	/**
+	 * Inserts the note's metadata into the metadata table
+	 * @param id the notes id
+	 * @param note the note
+	 */
+	private void insertNoteMetaData(int id, Note note){
+		for(Entry<String, String> entry: note.getMetadata().entrySet()){
+			String update = "insert into " + SCHEMA_NAME + ".NoteMetaData (noteID, " +
+					"fieldName, fieldData) values ('" + entry.getKey() + "', '" + 
+					entry.getValue() + "')";
+			
+			sql.getResultSafe(update);
+		}
+	}
+	
+	
+	/**
+	 * Inserts the note's tags into the tags table
+	 * @param id the note's id
+	 * @param note the note
+	 */
+	private void insertNoteTagsIntoTable(int id, Note note){
+		for(Tag t: note.getTags()){
+			String update;
+			
+			// Try to add the tag to the tag database. Ignore the exception that
+			// occurs if there is a duplicate tag
+			try{
+				update = "insert into " + SCHEMA_NAME + ".Tags (tag) values ('" + 
+						t.getName() + "')";
+				sql.getResultUnsafe(update);
+			}
+			catch(SQLException e){
+			}
+			
+			update = "insert into " + SCHEMA_NAME + ".NoteTags (noteID, tag) values " +
+					"(" + id + ", '" + t.getName() + "')";
+			
+			sql.getResultSafe(update);
+		}
+	}
+	
+	
+	/**
+	 * Inserts the perms into the perms table
+	 * @param id the id of the note
+	 * @param perms the map containing all the perms
+	 */
+	private void insertNotePermsIntoTable(int id, Map<UserEntity, Permission> perms) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
 	@Override
-	public User getUser(int id) {
+	public synchronized Note getNote(int noteID) throws DBException {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 
 	@Override
-	public Permission getPermission(int noteID, int userID) {
+	public synchronized void addUser(User u) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public synchronized User getUser(int id) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+
+	@Override
+	public synchronized Permission getPermission(int noteID, int userID) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+	/**Removes quotes from strings to avoid having the SQL syntax be invalidated.
+	 * @param s the string to clean
+	 * @return the clean string
+	 */
+	private String makeSafeString(String s){
+		String temp = s.replace("'", "");
+		return temp.replace("\"", "");
 	}
 
 }

@@ -1,5 +1,6 @@
 package DataModel;
 
+import java.util.Map;
 import java.util.Set;
 
 import org.joda.time.DateTime;
@@ -17,7 +18,7 @@ public interface Note extends FSObject {
 	
 	public DateTime getLastModified();
 	
-	public String getMetadataField(String field);
+	public Map<String, String> getMetadata();
 	
 	public Set<Tag> getTags();
 	

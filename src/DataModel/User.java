@@ -6,5 +6,5 @@ package DataModel;
  *
  */
 public interface User extends UserEntity {
-
+	
 }

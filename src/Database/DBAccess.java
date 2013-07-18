@@ -1,9 +1,12 @@
 package Database;
 
+import java.util.Map;
+
 import DataModel.Note;
 import DataModel.Notebook;
 import DataModel.Permission;
 import DataModel.User;
+import DataModel.UserEntity;
 
 /**
  * External users of this package should use this interface to make calls to the
@@ -38,7 +41,8 @@ public interface DBAccess {
 	 * @return the id number the note was added under
 	 * @throws DBException 
 	 */
-	public int addNote(int parentNotebookID, Note note) throws DBException;
+	public int addNote(int parentNotebookID, Note note, Map<UserEntity, Permission> perms) 
+			throws DBAddException, DBException;
 	
 	/**
 	 * Gets the note that corresponds with the inputed note id number

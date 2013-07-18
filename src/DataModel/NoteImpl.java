@@ -66,8 +66,8 @@ public final class NoteImpl implements Note {
 	}
 
 	@Override
-	public String getMetadataField(String field) {
-		return metadata.get(field);
+	public Map<String, String> getMetadata() {
+		return metadata;
 	}
 
 	@Override
