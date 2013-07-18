@@ -64,7 +64,7 @@ final class DBAccessImpl implements DBAccess {
 			// Add the object to the global file system object directory
 			String update = "insert into " + SCHEMA_NAME + ".FSObjects " +
 					"(objectID, objectName, typeName) values (" + (previousFSObjectID + 1) + 
-					", '" + notebook.getName() + "', notebook)";
+					", '" + notebook.getName() + "', 'notebook')";
 			sql.getResultSafe(update);
 			previousFSObjectID++;
 			
@@ -76,6 +76,7 @@ final class DBAccessImpl implements DBAccess {
 			// Place the notebook under the specified parent notebook
 			update = "insert into " + SCHEMA_NAME + ".FSStructure (parent, child) " +
 					"values (" + parentNotebookID + ", " + previousFSObjectID + ")";
+			sql.getResultSafe(update);
 			
 			// Return the ID of the notebook just added
 			return previousFSObjectID;
@@ -107,10 +108,12 @@ final class DBAccessImpl implements DBAccess {
 	@Override
 	public Notebook getNotebook(int notebookID) throws DBException {
 		// Get the details of the notebook
-		String query = "select notebookID, notebookName " +
-				"from " + SCHEMA_NAME + ".Notebooks " +
-				"where notebookID = " + notebookID;
-		
+		String query = "select notebookID, objectName " +
+				"from " + SCHEMA_NAME + ".Notebooks, " +
+				SCHEMA_NAME + ".FSObjects " +
+				"where notebookID = " + notebookID + " and " +
+				"objectID = notebookID";
+		System.out.println(query);
 		ResultSet rs = sql.getResultSafe(query);
 		
 		String notebookName = null;

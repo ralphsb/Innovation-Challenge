@@ -143,3 +143,6 @@ insert into FSObjectType (typeName) values ('notebook');
 
 insert into Permissions (permission) values ('read');
 insert into Permissions (permission) values ('write');
+
+insert into FSObjects (objectID, objectName, typeName) values (1, 'root', 'notebook');
+insert into Notebooks (notebookID) values (1);

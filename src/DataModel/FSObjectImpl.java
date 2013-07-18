@@ -37,5 +37,9 @@ public class FSObjectImpl implements FSObject {
 	public int getID() {
 		return id;
 	}
+	
+	public String toString(){
+		return id + ", " + name + ", " + type;
+	}
 
 }

@@ -42,5 +42,14 @@ public final class NotebookImpl implements Notebook {
 	public FSObjectType getType() {
 		return FSObjectType.NOTEBOOK;
 	}
+	
+	
+	public String toString(){
+		String out = id + ", " + name + ": \n";
+		for(FSObject obj: children){
+			out += "\t" + obj.toString() + "\n";
+		}
+		return out;
+	}
 
 }

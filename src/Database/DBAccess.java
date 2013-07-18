@@ -11,7 +11,8 @@ import DataModel.Notebook;
 public interface DBAccess {
 
 	/**
-	 * Adds a notebook as a child of the specified notebook
+	 * Adds a notebook as a child of the specified notebook. As of this writing, this
+	 * method is NOT designed to recursively add whatever children the notebook may have
 	 * @param parentNotebookID the ID number of the parent notebook
 	 * @param notebook the new notebook
 	 * @return the ID number of the notebook you just added
