@@ -8,6 +8,7 @@ package Database;
  */
 public interface DBAccess {
 
+	public int addNotebook(int parentNotebookID, String name);
 	
 	
 	/**

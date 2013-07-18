@@ -6,6 +6,12 @@ package Database;
  *
  */
 public class DBAccessImpl implements DBAccess {
+
+	@Override
+	public int addNotebook(int parentNotebookID, String name) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 	
 	
 
