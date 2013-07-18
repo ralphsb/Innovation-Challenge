@@ -8,6 +8,7 @@ import java.util.List;
 import DataModel.FSObject;
 import DataModel.FSObjectImpl;
 import DataModel.FSObjectType;
+import DataModel.Note;
 import DataModel.Notebook;
 import DataModel.NotebookImpl;
 
@@ -113,7 +114,7 @@ final class DBAccessImpl implements DBAccess {
 				SCHEMA_NAME + ".FSObjects " +
 				"where notebookID = " + notebookID + " and " +
 				"objectID = notebookID";
-		System.out.println(query);
+		
 		ResultSet rs = sql.getResultSafe(query);
 		
 		String notebookName = null;
@@ -153,6 +154,20 @@ final class DBAccessImpl implements DBAccess {
 		
 		// Create and return the new Notebook
 		return new NotebookImpl(notebookID, notebookName, children);
+	}
+
+
+	@Override
+	public int addNote(int parentNotebookID, Note note) throws DBException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public Note getNote(int noteID) throws DBException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
