@@ -25,6 +25,7 @@ create table Users(
 	userID int,
 	userName varchar(100),
 	pass varchar(100),
+	email varchar(100),
 	
 	primary key (userID),
 	foreign key (userID) references UserEntities(userEntityID) on delete cascade
