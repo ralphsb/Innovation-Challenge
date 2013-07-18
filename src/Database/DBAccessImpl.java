@@ -5,14 +5,22 @@ package Database;
  * @author Ralph
  *
  */
-public class DBAccessImpl implements DBAccess {
+class DBAccessImpl implements DBAccess {
 
+	/**
+	 * The sql interface singleton.
+	 */
+	private SQLInterface sql;
+	
+	
+	DBAccessImpl(){
+		sql = SQLInterface.getSQLInterface();
+	}
+	
 	@Override
-	public int addNotebook(int parentNotebookID, String name) {
+	public int addNotebook(int parentNotebookID, String name) throws DBAddException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-	
-	
 
 }

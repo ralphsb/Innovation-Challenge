@@ -8,7 +8,14 @@ package Database;
  */
 public interface DBAccess {
 
-	public int addNotebook(int parentNotebookID, String name);
+	/**
+	 * Adds a notebook as a child of the specified notebook
+	 * @param parentNotebookID the ID number of the parent notebook
+	 * @param name the name of the new notebook
+	 * @return the ID number of the notebook you just added
+	 * @throws DBAddException
+	 */
+	public int addNotebook(int parentNotebookID, String name) throws DBAddException;
 	
 	
 	/**
