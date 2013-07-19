@@ -8,6 +8,7 @@ drop table Notes;
 drop table FSStructure;
 drop table Notebooks;
 drop table FSObjects;
+drop table FSObjectType;
 drop table UserGroupMappings;
 drop table UserGroups;
 drop table Users;
@@ -24,6 +25,7 @@ create table Users(
 	userID int,
 	userName varchar(100),
 	pass varchar(100),
+	email varchar(100),
 	
 	primary key (userID),
 	foreign key (userID) references UserEntities(userEntityID) on delete cascade
@@ -46,15 +48,23 @@ create table UserGroupMappings(
 	foreign key (groupID) references UserGroups(groupID) on delete cascade
 );
 
+create table FSObjectType(
+	typeName varchar(20),
+	
+	primary key (typeName)
+);
+
 create table FSObjects(
 	objectID int,
-	
-	primary key (objectID)
+	objectName varchar(100),
+	typeName varchar(20),
+
+	primary key (objectID),
+	foreign key (typeName) references FSObjectType (typeName)
 );
 
 create table Notebooks(
 	notebookID int,
-	notebookName varchar(100),
 	
 	primary key (notebookID),
 	foreign key(notebookID) references FSObject(objectID)
@@ -71,12 +81,14 @@ create table FSStructure(
 
 create table Notes(
 	noteID int,
-	author varchar(50),
+	author int,
 	created datetime,
+	lastModified datetime,
 	content text,
 
 	primary key (noteID),
-	foreign key (noteID) references FSObjects(objectID) on delete cascade
+	foreign key (noteID) references FSObjects(objectID) on delete cascade,
+	foreign key (author) references Users(userID) on delete cascade
 );
 
 create table NoteMetaData(
@@ -129,3 +141,11 @@ create table NotePermissions(
 	foreign key (permission) references Permissions(permission) on delete cascade
 );
 
+insert into FSObjectType (typeName) values ('note');
+insert into FSObjectType (typeName) values ('notebook');
+
+insert into Permissions (permission) values ('read');
+insert into Permissions (permission) values ('write');
+
+insert into FSObjects (objectID, objectName, typeName) values (1, 'root', 'notebook');
+insert into Notebooks (notebookID) values (1);

@@ -3,6 +3,7 @@ package DataModel;
 public enum Permission {
 
 	READ,
-	WRITE
+	WRITE,
+	NONE
 	
 }

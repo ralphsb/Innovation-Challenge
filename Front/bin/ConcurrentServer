@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+// BlackNote Concurrent Editor Server
+// author: yfan
+
+var port = 8888;
+
+var connect = require('connect');
+var sharejs = require('share').server;
+
+var server = connect(
+      connect.logger(),
+      connect.static(__dirname + '/../webpages')
+    );
+
+var options = {db: {type: 'none'}};
+sharejs.attach(server, options);
+
+server.listen(port);
+console.log('BlackNote Concurrent Server running at http://localhost:' + port);
+

@@ -8,4 +8,6 @@ package DataModel;
  */
 public interface UserEntity {
 
+	public int getID();
+	
 }

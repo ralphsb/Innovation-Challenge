@@ -7,4 +7,6 @@ package DataModel;
  */
 public interface Tag {
 
+	public String getName();
+	
 }
