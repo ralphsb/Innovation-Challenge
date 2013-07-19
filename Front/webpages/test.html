@@ -3,32 +3,43 @@
 	<head>
 		<title>Concurrent Editor Test</title>
 		<meta charset="utf-8">
-		<style>
-			#editor {
-				font-size: 1em;
-			}
-		</style>
 	</head>
+    
 	<body>
 		
-		<textarea cols="100" rows="30" disabled id="editor">Loading...</textarea>
+        <script type="text/javascript" src="tinymce/tinymce.min.js"></script>
+		<script type="text/javascript">
+        tinymce.init({
+            selector: "textarea",
+            plugins: [
+                "advlist autolink lists link image charmap print preview anchor",
+                "searchreplace visualblocks code fullscreen",
+                "insertdatetime media table contextmenu paste moxiemanager"
+            ],
+            toolbar: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image"
+        });
+        </script>
 
-    <script src="/channel/bcsocket.js"></script>
-		<script src="/share/share.uncompressed.js"></script>
-		<script src="/share/textarea.js"></script>
-		<script>
-var elem = document.getElementById('editor');
+        <form method="post" action="somepage">
+            <textarea name="content" id="editor" style="width:100%" disabled></textarea>
+        </form>
+        
 
-sharejs.open('ddd', 'text', function(error, doc) {
-	window.doc = doc;
-	if (error) {
-		console.log(error);
-	} else {
-		elem.disabled = false;
-		doc.attach_textarea(elem);
-	}
-});
-		</script>
+<script src="/channel/bcsocket.js"></script>
+<script src="/share/share.uncompressed.js"></script>
+<script src="/share/textarea.js"></script>
+<script>
+	var elem = document.getElementById('editor');
+	sharejs.open('ddd', 'text', function(error, doc) {
+		window.doc = doc;
+		if (error) {
+			console.log(error);
+		} else {
+			elem.disabled = false;
+			doc.attach_textarea(elem);
+		}
+	});
+</script>
 	</body>
 </html>
 		
