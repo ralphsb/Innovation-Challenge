@@ -1,0 +1,41 @@
+body
+{
+background-color:black;
+color: white;
+}
+
+.hero{
+	padding: 60px;
+margin-bottom: 30px;
+font-size: 18px;
+font-weight: 200;
+line-height: 30px;
+color: inherit;
+background-color: hsl(0, 0%, 93%);
+-webkit-border-radius: 6px;
+-moz-border-radius: 6px;
+border-radius: 6px;
+}
+.filename-col{
+float: left;
+width: 32px !important;
+height: 32px !important; 
+margin-right: 8px;
+display: block;
+overflow: hidden;
+background-color: hsla(0, 0%, 0%, 0);
+vertical-align: bottom;
+border: 1px solid hsla(0, 0%, 0%, 0);
+cursor: pointer;}
+
+.list_view .browse-file .filename-col a, .list_view .browse-new-folder .filename-col a {
+color: hsl(0, 0%, 0%);
+font-size: 13px;
+width: 100px;
+white-space: pre;
+}
+
+.modal-footer {
+	background-color:white;
+
+}
